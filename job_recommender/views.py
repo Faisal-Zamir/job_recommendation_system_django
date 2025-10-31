@@ -1,6 +1,6 @@
+from django.http import JsonResponse
 import pandas as pd
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from .forms import JobRecommendationForm
 from job_recommender.Model_Files.user_jobs_recommendation import recommend_jobs
 
@@ -9,7 +9,7 @@ def homepage(request):
     recommendations = None
     user_info = None
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         form = JobRecommendationForm(request.POST)
         if form.is_valid():
             # Get cleaned data from form
@@ -49,29 +49,17 @@ def homepage(request):
             if recommendations:
                 for job in recommendations['recommendations']:
                     job['similarity_score'] = round(job['similarity_score'] * 100, 2)
-            
-            # # Print results to console (for debugging)
-            # print("\n" + "="*60)
-            # print("JOB RECOMMENDATION RESULTS")
-            # print("="*60)
-            # print(f"User: {recommendations['user_name']}")
-            # print(f"Profile: {recommendations['user_profile']}")
-            # print(f"Total Recommendations: {recommendations['total_recommendations']}")
-            # print("\nTop Job Recommendations:")
-            
-            # for i, job in enumerate(recommendations['recommendations'], 1):
-            #     print(f"{i}. {job['job_title']}")
-            #     print(f"   Location: {job['location']}")
-            #     print(f"   Match Score: {job['similarity_score']:.2%}")
-            #     print(f"   Description: {job['description']}")
-            #     print()
-                
+            print("Returnd json....")
+            return JsonResponse({
+                "user_info": user_info,
+                "recommendations": recommendations['recommendations']
+            }) 
+        return JsonResponse({"error": "Invalid form submission"})
+     
     else:
         form = JobRecommendationForm()
     
     context = {
         'form': form,
-        'recommendations': recommendations,
-        'user_info': user_info
     }
     return render(request, 'job_recommender/homepage.html', context)

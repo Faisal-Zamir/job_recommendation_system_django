@@ -6,13 +6,38 @@ import contractions
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+import gdown
 
+
+# Define base directory (folder where this script is located)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Load all saved components
-vectorizer = joblib.load(os.path.join(BASE_DIR, "tfidf_vectorizer.pkl"))
-tfidf_matrix = joblib.load(os.path.join(BASE_DIR, "jobs_tfidf_matrix.pkl"))
-jobs_data = pd.read_pickle(os.path.join(BASE_DIR, "jobs_data.pkl"))
+# Create a dedicated folder for model files
+MODEL_DIR = os.path.join(BASE_DIR, "model_files")
+os.makedirs(MODEL_DIR, exist_ok=True)
+
+# Google Drive file IDs (replace with your actual IDs)
+files = {
+    "tfidf_vectorizer.pkl": "1aVoqYtFJWhf2gviwKJFgyhW8TzMYlumR",
+    "jobs_tfidf_matrix.pkl": "1YYhpsayNVpdIcwFE-lMo4Ttyqk1BayjP",
+    "jobs_data.pkl": "1H9SFmW6nK1p7yQpI7SCPTGiZW7n0iLJ7",
+}
+
+# Download missing files once
+for filename, file_id in files.items():
+    file_path = os.path.join(MODEL_DIR, filename)
+    if not os.path.exists(file_path):
+        print(f"Downloading {filename} from Google Drive...")
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, file_path, quiet=False)
+    else:
+        print(f"{filename} already exists. Skipping download.")
+
+# --- Load saved components (your original logic) ---
+vectorizer = joblib.load(os.path.join(MODEL_DIR, "tfidf_vectorizer.pkl"))
+tfidf_matrix = joblib.load(os.path.join(MODEL_DIR, "jobs_tfidf_matrix.pkl"))
+jobs_data = pd.read_pickle(os.path.join(MODEL_DIR, "jobs_data.pkl"))
+
 
 # Initialize preprocessing components
 stop_words = set(stopwords.words('english'))

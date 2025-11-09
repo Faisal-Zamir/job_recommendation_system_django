@@ -19,8 +19,8 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 # Google Drive file IDs (replace with your actual IDs)
 files = {
     "tfidf_vectorizer.pkl": "1aVoqYtFJWhf2gviwKJFgyhW8TzMYlumR",
-    "jobs_tfidf_matrix.pkl": "1YYhpsayNVpdIcwFE-lMo4Ttyqk1BayjP",
-    "jobs_data.pkl": "1H9SFmW6nK1p7yQpI7SCPTGiZW7n0iLJ7",
+    "jobs_tfidf_matrix_compressed.pkl": "1EiOd-9k4_ugScV2dBOaqKeyGejg1n3fZ",
+    "jobs_data_compressed.pkl": "1w7DtBlC5WTp9OkK3poQ1stl-9PTDw3oO",
 }
 
 # Download missing files once
@@ -35,8 +35,8 @@ for filename, file_id in files.items():
 
 # --- Load saved components (your original logic) ---
 vectorizer = joblib.load(os.path.join(MODEL_DIR, "tfidf_vectorizer.pkl"))
-tfidf_matrix = joblib.load(os.path.join(MODEL_DIR, "jobs_tfidf_matrix.pkl"))
-jobs_data = pd.read_pickle(os.path.join(MODEL_DIR, "jobs_data.pkl"))
+tfidf_matrix = joblib.load(os.path.join(MODEL_DIR, "jobs_tfidf_matrix_compressed.pkl"))
+jobs_data = pd.read_pickle(os.path.join(MODEL_DIR, "jobs_data_compressed.pkl"))
 
 
 # Initialize preprocessing components
